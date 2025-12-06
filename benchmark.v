@@ -20,8 +20,6 @@ fn run_command_once(cmd string) !f64 {
 }
 
 fn run_command(cmd string, iterations int) !BenchResult {
-	name := cmd.split(' ')[0]
-	
 	mut best_time := f64(0)
 	mut worst_time := f64(0)
 	
@@ -36,7 +34,7 @@ fn run_command(cmd string, iterations int) !BenchResult {
 	}
 	
 	return BenchResult{
-		name: name
+		name: cmd
 		time_ms: best_time
 		worst_time_ms: worst_time
 	}
@@ -56,22 +54,21 @@ fn verify_consistency(all_commands []string, extra_args string) bool {
 	mut all_match := true
 	
 	for cmd in all_commands {
-		base_cmd := cmd.replace(extra_args, '')
-		test_cmd := '${base_cmd} -p'
+		test_cmd := '${cmd} -p'
 		result := os.execute(test_cmd)
 		if result.exit_code != 0 {
-			eprintln('  ✗ ${base_cmd}: Failed to run')
+			eprintln('  ✗ ${cmd}: Failed to run')
 			all_match = false
 			continue
 		}
 		normalized := normalize(result.output)
 		if reference_output == '' {
 			reference_output = normalized
-			println('  ✓ ${base_cmd} (reference)')
+			println('  ✓ ${cmd} (reference)')
 		} else if normalized == reference_output {
-			println('  ✓ ${base_cmd}')
+			println('  ✓ ${cmd}')
 		} else {
-			println('  ✗ ${base_cmd}: Output differs from reference')
+			println('  ✗ ${cmd}: Output differs from reference')
 			all_match = false
 		}
 	}
@@ -87,22 +84,21 @@ fn verify_consistency(all_commands []string, extra_args string) bool {
 	all_match = true
 	
 	for cmd in all_commands {
-		base_cmd := cmd.replace(extra_args, '')
-		test_cmd := '${base_cmd} -v'
+		test_cmd := '${cmd} -v'
 		result := os.execute(test_cmd)
 		if result.exit_code != 0 {
-			eprintln('  ✗ ${base_cmd}: Failed to run')
+			eprintln('  ✗ ${cmd}: Failed to run')
 			all_match = false
 			continue
 		}
 		normalized := normalize(result.output)
 		if reference_output == '' {
 			reference_output = normalized
-			println('  ✓ ${base_cmd} (reference)')
+			println('  ✓ ${cmd} (reference)')
 		} else if normalized == reference_output {
-			println('  ✓ ${base_cmd}')
+			println('  ✓ ${cmd}')
 		} else {
-			println('  ✗ ${base_cmd}: Output differs from reference')
+			println('  ✗ ${cmd}: Output differs from reference')
 			all_match = false
 		}
 	}
@@ -181,35 +177,35 @@ fn main() {
 	
 	// Commands to run (Python and JavaScript are interpreted, others are compiled binaries)
 	mut all_commands := [
-		'python3 immutable.py${extra_args}',
-		'python3 in_place.py${extra_args}',
-		'node immutable.js${extra_args}',
-		'node in_place.js${extra_args}',
+		'python3 immutable.py',
+		'python3 in_place.py',
+		'node immutable.js',
+		'node in_place.js',
 	]
 	
 	if cpp_immutable_build.exit_code == 0 {
-		all_commands << './build/immutable_cpp${extra_args}'
+		all_commands << './build/immutable_cpp'
 	}
 	if cpp_inplace_build.exit_code == 0 {
-		all_commands << './build/in_place_cpp${extra_args}'
+		all_commands << './build/in_place_cpp'
 	}
 	if go_immutable_build.exit_code == 0 {
-		all_commands << './build/immutable_go${extra_args}'
+		all_commands << './build/immutable_go'
 	}
 	if go_inplace_build.exit_code == 0 {
-		all_commands << './build/in_place_go${extra_args}'
+		all_commands << './build/in_place_go'
 	}
 	if v_immutable_build.exit_code == 0 {
-		all_commands << './build/immutable_v${extra_args}'
+		all_commands << './build/immutable_v'
 	}
 	if v_inplace_build.exit_code == 0 {
-		all_commands << './build/in_place_v${extra_args}'
+		all_commands << './build/in_place_v'
 	}
 	if ocaml_immutable_build.exit_code == 0 {
-		all_commands << './build/immutable_ml${extra_args}'
+		all_commands << './build/immutable_ml'
 	}
 	if ocaml_inplace_build.exit_code == 0 {
-		all_commands << './build/in_place_ml${extra_args}'
+		all_commands << './build/in_place_ml'
 	}
 	
 	// Verify all implementations produce the same output
@@ -224,8 +220,9 @@ fn main() {
 	println('\nRunning benchmarks (${iterations} iterations each, best time kept)...\n')
 	
 	for cmd in all_commands {
-		print('Running ${cmd}... ')
-		result := run_command(cmd, iterations) or {
+		full_cmd := cmd + extra_args
+		print('Running ${full_cmd}... ')
+		result := run_command(full_cmd, iterations) or {
 			eprintln('ERROR: ${err}')
 			continue
 		}
