@@ -255,13 +255,12 @@ fn main() {
 	println('\n' + '='.repeat(50))
 	println('Benchmark Results (sorted by execution time)')
 	println('='.repeat(50))
-	//println('${' Rank':-6} ${'Implementation':-25} ${'Time (ms)':>12}')
+	println("${' Rank':-6} ${'Implementation':-25} ${'Time (ms)':12}")
 	println('-'.repeat(50))
 	
 	for i, result in results {
 		rank := '${i + 1}.'
-		//println('${rank:-6} ${result.name:-25} ${result.time_ms:>12.2f}')
-		println('${rank} ${result.name} ${result.time_ms} ms')
+		println('${rank:-6} ${result.name:-25} ${result.time_ms:12.2f}')
 	}
 	
 	println('='.repeat(50))
