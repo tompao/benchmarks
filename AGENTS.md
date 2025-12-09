@@ -163,5 +163,7 @@ To add a new language to the benchmark:
 - **Compilation**: Use optimization flags:
   - C++: `-O3 -march=native`
   - Go: default optimizations in compiled binaries
+  - OCaml: `ocamlopt` (native code compiler)
+  - Rust: `-C opt-level=3 -C target-cpu=native`
   - V: `-prod` flag
-  - Python: Interpreted (no compilation)
+

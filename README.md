@@ -7,8 +7,11 @@ A multi-language quicksort benchmark comparing functional (immutable) and impera
 Currently implemented in:
 - **C++** (compiled with `-O3 -march=native`)
 - **Go** (compiled)
-- **V** (compiled with `-prod`)
+- **JavaScript/Node.js** (interpreted)
+- **OCaml** (compiled with `ocamlopt`)
 - **Python** (interpreted)
+- **Rust** (compiled with `-C opt-level=3 -C target-cpu=native`)
+- **V** (compiled with `-prod`)
 
 ## Implementation Variants
 
